@@ -69,16 +69,16 @@ export default function BookList({ books, onDelete, onUpdate }) {
               </td>
               <td style={{ padding: 8, borderBottom: "1px solid #f0f0f0" }}>
                 {isEditing ? (
-                  <>
-                    <button onClick={() => saveEdit(id)} style={{ marginRight: 8 }}>Save</button>
-                    <button onClick={cancelEdit}>Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => startEdit(b)} style={{ marginRight: 8 }}>Edit</button>
-                    <button onClick={() => onDelete(id)}>Delete</button>
-                  </>
-                )}
+                    <>
+                      <button onClick={() => saveEdit(id)} style={{ marginRight: 8, background: '#28a745', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 4 }}>Save</button>
+                      <button onClick={cancelEdit} style={{ background: '#6c757d', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 4 }}>Cancel</button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => startEdit(b)} style={{ marginRight: 8, background: '#0d6efd', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 4 }}>Edit</button>
+                      <button onClick={() => onDelete(id)} style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '6px 10px', borderRadius: 4 }}>Delete</button>
+                    </>
+                  )}
               </td>
             </tr>
           );
