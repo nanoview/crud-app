@@ -2,37 +2,81 @@ import { useEffect, useState } from "react";
 import { api } from "./api";
 import BookForm from "./components/BookForm";
 import BookList from "./components/BookList";
+import Login from "./components/Login";
 
 export default function App() {
   const [books, setBooks] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(Boolean(localStorage.getItem('token')));
+
+  const handleLogin = () => {
+    setIsAdmin(true);
+    fetchBooks();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsAdmin(false);
+  };
 
   const fetchBooks = async () => {
-    const res = await api.get("/");
-    setBooks(res.data);
+    try {
+      const res = await api.get("/books");
+      setBooks(res.data);
+    } catch (error) {
+      if (error.response?.status === 401) {
+        handleLogout();
+      }
+    }
   };
 
   useEffect(() => { fetchBooks(); }, []);
 
   const addBook = async (book) => {
-    await api.post("/", book);
-    fetchBooks();
+    try {
+      await api.post("/books", book);
+      fetchBooks();
+    } catch (error) {
+      if (error.response?.status === 401) {
+        handleLogout();
+      }
+    }
   };
 
   const updateBook = async (id, book) => {
-    await api.put(`/${id}`, book);
-    fetchBooks();
+    try {
+      await api.put(`/books/${id}`, book);
+      fetchBooks();
+    } catch (error) {
+      if (error.response?.status === 401) {
+        handleLogout();
+      }
+    }
   };
 
   const deleteBook = async (id) => {
-    await api.delete(`/${id}`);
-    fetchBooks();
+    try {
+      await api.delete(`/books/${id}`);
+      fetchBooks();
+    } catch (error) {
+      if (error.response?.status === 401) {
+        handleLogout();
+      }
+    }
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>📚 Book Manager</h1>
-      <BookForm onSubmit={addBook} />
-      <BookList books={books} onDelete={deleteBook} onUpdate={updateBook} />
+    <div className="container">
+      <h1>Book Management System</h1>
+      {isAdmin ? (
+        <>
+          <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <BookForm onSubmit={addBook} />
+          <BookList books={books} onDelete={deleteBook} onUpdate={updateBook} />
+        </>
+      ) : (
+        <Login onLogin={handleLogin} />
+      )}
     </div>
   );
+
 }

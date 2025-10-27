@@ -1,9 +1,10 @@
 import express from "express";
 import Book from "../models/Book.js";
+import { authMiddleware } from "../middleware/auth.js";
 const router = express.Router();
 
-// CREATE
-router.post("/", async (req, res) => {
+// CREATE - requires authentication
+router.post("/", authMiddleware, async (req, res) => {
   const book = new Book(req.body);
   await book.save();
   res.json(book);
