@@ -8,6 +8,11 @@ const router = express.Router();
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+        
+        if (!username || !password) {
+            return res.status(400).json({ message: 'Username and password are required' });
+        }
+
         const admin = await Admin.findOne({ username });
 
         if (!admin) {
@@ -19,6 +24,11 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
+        if (!process.env.JWT_SECRET) {
+            console.error('JWT_SECRET is not configured');
+            return res.status(500).json({ message: 'Server configuration error' });
+        }
+
         const token = jwt.sign(
             { adminId: admin._id },
             process.env.JWT_SECRET,
@@ -27,7 +37,11 @@ router.post('/login', async (req, res) => {
 
         res.json({ token });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        console.error('Login error:', error);
+        res.status(500).json({ 
+            message: 'Server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });
 

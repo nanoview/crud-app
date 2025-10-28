@@ -2,22 +2,23 @@ import { useState } from 'react';
 import { api } from '../api';
 import { Link } from 'react-router-dom';
 
-const Login = ({ onLogin }) => {
+const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         try {
-            console.log('Attempting login...');
-            const response = await api.post('/auth/login', { username, password });
-            console.log('Login response:', response.data);
-            localStorage.setItem('token', response.data.token);
-            onLogin();
+            console.log('Attempting registration...');
+            const response = await api.post('/auth/register', { username, password });
+            console.log('Registration response:', response.data);
+            setSuccess(true);
+            setError('');
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('Registration error:', error);
             if (error.response) {
                 setError(error.response.data?.message || `Server error: ${error.response.status}`);
             } else if (error.request) {
@@ -28,9 +29,18 @@ const Login = ({ onLogin }) => {
         }
     };
 
+    if (success) {
+        return (
+            <div className="register-container">
+                <h2>Registration Successful!</h2>
+                <p>You can now <Link to="/">login</Link> with your credentials.</p>
+            </div>
+        );
+    }
+
     return (
-        <div className="login-container">
-            <h2>Admin Login</h2>
+        <div className="register-container">
+            <h2>Create Admin Account</h2>
             {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleSubmit}>
                 <div>
@@ -53,13 +63,13 @@ const Login = ({ onLogin }) => {
                         required
                     />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit">Register</button>
             </form>
             <p>
-                First time setup? <Link to="/register">Create admin account</Link>
+                Already have an account? <Link to="/">Login here</Link>
             </p>
         </div>
     );
 };
 
-export default Login;
+export default Register;

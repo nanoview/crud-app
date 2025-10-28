@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { api } from "./api";
 import BookForm from "./components/BookForm";
 import BookList from "./components/BookList";
 import Login from "./components/Login";
+import Register from "./components/Register";
 
 export default function App() {
   const [books, setBooks] = useState([]);
@@ -65,18 +67,27 @@ export default function App() {
   };
 
   return (
-    <div className="container">
-      <h1>Book Management System</h1>
-      {isAdmin ? (
-        <>
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
-          <BookForm onSubmit={addBook} />
-          <BookList books={books} onDelete={deleteBook} onUpdate={updateBook} />
-        </>
-      ) : (
-        <Login onLogin={handleLogin} />
-      )}
-    </div>
+    <Router>
+      <div className="container">
+        <h1>Book Management System</h1>
+        <Routes>
+          <Route path="/register" element={
+            isAdmin ? <Navigate to="/" /> : <Register />
+          } />
+          <Route path="/" element={
+            isAdmin ? (
+              <>
+                <button onClick={handleLogout} className="logout-btn">Logout</button>
+                <BookForm onSubmit={addBook} />
+                <BookList books={books} onDelete={deleteBook} onUpdate={updateBook} />
+              </>
+            ) : (
+              <Login onLogin={handleLogin} />
+            )
+          } />
+        </Routes>
+      </div>
+    </Router>
   );
 
 }
