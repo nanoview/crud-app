@@ -13,6 +13,11 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({ message: 'CRUD App API Server', version: '1.0' });
+});
+
 // Mount auth routes
 app.use('/api/auth', authRoutes);
 
