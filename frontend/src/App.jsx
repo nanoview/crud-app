@@ -69,7 +69,13 @@ export default function App() {
   return (
     <Router>
       <div className="container">
-        <h1>Book Management System</h1>
+        {isAdmin && (
+          <div className="header">
+            <h1>Book Management System</h1>
+            <button onClick={handleLogout} className="logout-btn">Sign Out</button>
+          </div>
+        )}
+        {!isAdmin && <h1>Book Management System</h1>}
         <Routes>
           <Route path="/register" element={
             isAdmin ? <Navigate to="/" /> : <Register />
@@ -77,7 +83,6 @@ export default function App() {
           <Route path="/" element={
             isAdmin ? (
               <>
-                <button onClick={handleLogout} className="logout-btn">Logout</button>
                 <BookForm onSubmit={addBook} />
                 <BookList books={books} onDelete={deleteBook} onUpdate={updateBook} />
               </>
